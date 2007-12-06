@@ -38,8 +38,8 @@
 	</licenses>    
 	
 	<scm>
-		<connection>scm:svn:https://jslp.svn.sourceforge.net/svnroot/jslp/jSLP-OSGi</connection>
-		<developerConnection>scm:svn:rjan@https://jslp.svn.sourceforge.net/svnroot/jslp/jSLP-OSGi</developerConnection>
+		<connection>scm:svn:https://jslp.svn.sourceforge.net/svnroot/jslp</connection>
+		<developerConnection>scm:svn:rjan@https://jslp.svn.sourceforge.net/svnroot/jslp</developerConnection>
 		<url>http://jslp.svn.sourceforge.net/jslp</url>
 	</scm>
     
