@@ -40,6 +40,11 @@
 				<td>VoiceHoc is a platform for running out-of-the-box SIP-based VoIP applications transparently in Mobile Ad Hoc Networks (MANETs) and heterogneous Internet-connected MANETs. VoiceHoc adopts a fully decentralized SIP infrastructure which makes use of D-SLP, an efficient service discovery mechanism in MANETs. D-SLP provides a regular SLP interface over TCP and UDP for service discovery, but exploits the underlying MANET routing protocol to piggyback the service information during the route setup. Mostly, the problem with these systems is that they are routing dependent. The very benefit of D-SLP however, is that it allows handlers for specific MANET routing protocols to be loaded like plugins. <br/> (Current research project of Patrick Stuedi, ETH Zurich)</td>				
 				<td></td>
 			</tr>
+			<tr>
+				<td>Eclipse ECF</td>
+				<td>The Eclipse Communication Framework (ECF) uses jSLP as a provider for the Discovery API.</td>				
+				<td>http://www.eclipse.org/ecf</td>
+			</tr>
 		</table>		
 	</p>
 

@@ -320,7 +320,6 @@ public final class ServiceURL extends ch.ethz.iks.slp.impl.AuthenticatedURL
 	/**
 	 * get the byte representation of the ServiceURL instance.
 	 * 
-	 * @return a byte array.
 	 * @throws IOException
 	 * @throws IOException
 	 *             if an internal processing error occurs.

@@ -108,9 +108,15 @@
       </plugin>
     </plugins>
   </build>
-  
+    
 	<reporting>
     	<plugins>
+  	       <plugin>
+    	      <artifactId>maven-site-plugin</artifactId>
+        	  <configuration>
+          	     <templateFile>maven-site-jslp.vm</templateFile>
+        	   </configuration>
+   	    	</plugin>
       		<plugin>
         		<groupId>org.apache.maven.plugins</groupId>
         		<artifactId>maven-javadoc-plugin</artifactId>
@@ -170,7 +176,7 @@
   <distributionManagement>
     <site>
       <id>sourceforge-site</id>
-      <url>scp://shell.sourceforge.net/home/groups/r/r-/r-osgi/htdocs/</url>
+      <url>scp://shell.sourceforge.net/home/groups/j/js/jslp/htdocs/</url>
     </site>
     <repository>
       <id>iks-snapshots</id>

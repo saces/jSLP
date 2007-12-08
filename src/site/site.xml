@@ -27,15 +27,14 @@
   		<item name="Home"	 						href="/index.html" />
   		<item name="jSLP" collapse="false"			href="/jSLP/index.html">
   			<item name="Getting Started" 			href="/jSLP/userguide.html" />
-			<item name="jSLP Modularity"			href="/jSLP/modularity.html"/>
-			<item name="JavaDocs"					href="http://jslp.sourceforge.net/apidocs/index.html" />
+			<item name="jSLP Modularity"			href="/jSLP/modularity.html"/>			
 	  		<item name="Download"					href="http://sourceforge.net/project/showfiles.php?group_id=151721" />
 	  	</item>
   		<item name="jSLP-OSGi" collapse="false"		href="/jSLP-OSGi/index.html">
   			<item name="Getting Started" 			href="/jSLP-OSGi/userguide.html" />
-			<item name="JavaDocs"					href="http://jslp.sourceforge.net/jSLP-OSGi/apidocs/index.html" />
   			<item name="Download"					href="http://sourceforge.net/project/showfiles.php?group_id=151721" />
   		</item>
+  		<item name="JavaDocs"					    href="http://jslp.sourceforge.net/apidocs/index.html" />
 		<item name="jSLP Properties"                href="/properties.html"/>
   		<item name="Enabling SLP Security"          href="/security.html" />
   		<item name="Project License"				href="/license.html" />
