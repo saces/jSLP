@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 import ch.ethz.iks.slp.ServiceLocationException;
 
 /**
@@ -48,6 +49,9 @@ class ServiceTypeRequest extends RequestMessage {
 	 * the naming authority.
 	 */
 	String namingAuthority;
+	
+	private static final String NA_ALL = "*";
+	private static final String NA_DEFAULT = "";
 
 	/**
 	 * creates a new ServiceTypeRequest.
@@ -63,7 +67,7 @@ class ServiceTypeRequest extends RequestMessage {
 			final Locale theLocale) {
 		funcID = SRVTYPERQST;
 		prevRespList = new ArrayList();
-		namingAuthority = authority != null ? authority : "";
+		namingAuthority = authority != null ? authority : NA_ALL;
 		scopeList = scopes;
 		if (scopeList == null) {
 			scopeList = new ArrayList();
@@ -84,9 +88,11 @@ class ServiceTypeRequest extends RequestMessage {
 	 */
 	ServiceTypeRequest(final DataInputStream input) throws IOException {
 		prevRespList = stringToList(input.readUTF(), ",");
-		final short authLen = input.readShort();
-		if (authLen == -1) {
-			namingAuthority = "";
+		final int authLen = input.readUnsignedShort();
+		if (authLen == 0xFFFF) {
+			namingAuthority = NA_ALL;
+		}else if(authLen == -1) {
+			namingAuthority = NA_DEFAULT;
 		} else {
 			byte[] buf = new byte[authLen];
 			input.readFully(buf);
@@ -124,8 +130,9 @@ class ServiceTypeRequest extends RequestMessage {
 	protected void writeTo(final DataOutputStream out) throws IOException {
 		super.writeHeader(out, getSize());
 		out.writeUTF(listToString(prevRespList, ","));
-		if (namingAuthority.equals("")) {
-			// out.writeShort(0xFFFF);
+		if (namingAuthority.equals(NA_ALL)) {
+			out.writeShort(0xFFFF);
+		} else if (namingAuthority.equals(NA_DEFAULT)) {
 			out.writeUTF("");
 		} else {
 			out.writeUTF(namingAuthority);
@@ -142,7 +149,7 @@ class ServiceTypeRequest extends RequestMessage {
 	int getSize() {
 		int len = getHeaderSize() + 2
 				+ listToString(prevRespList, ",").length();
-		if (namingAuthority.equals("")) {
+		if(namingAuthority.equals(NA_DEFAULT) || namingAuthority.equals(NA_ALL)) {
 			len += 2;
 		} else {
 			len += 2 + namingAuthority.length();
@@ -160,7 +167,13 @@ class ServiceTypeRequest extends RequestMessage {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(super.toString());
 		buffer.append(", prevRespList: " + prevRespList);
-		buffer.append(", namingAuthority: " + namingAuthority);
+		if(namingAuthority.equals(NA_ALL)) {
+			buffer.append(", namingAuthority: ALL (NA_ALL)");
+		} else if (namingAuthority.equals(NA_DEFAULT)) {
+			buffer.append(", namingAuthority: IANA (NA_DEFAULT)");
+		} else {
+			buffer.append(", namingAuthority: " + namingAuthority);
+		}
 		buffer.append(", scopeList: " + scopeList);
 		return buffer.toString();
 	}

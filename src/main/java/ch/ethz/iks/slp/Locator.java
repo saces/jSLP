@@ -62,7 +62,8 @@ public interface Locator {
 	 * 
 	 * @param namingAuthority
 	 *            the naming authority for the service type. If omitted,
-	 *            <code>IANA</code> will be assumed.
+	 *            ALL Service Types are returned, regardless of Naming Authority.
+	 *            With the empty <code>String</code> (""), <code>IANA</code> will be assumed.
 	 * @param scopes
 	 *            a <code>List</code> of scopes in that service types are to
 	 *            be discovered.

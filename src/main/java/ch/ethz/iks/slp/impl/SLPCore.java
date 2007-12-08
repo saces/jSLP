@@ -51,6 +51,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import ch.ethz.iks.slp.ServiceLocationException;
 import ch.ethz.iks.slp.ServiceType;
 
@@ -70,7 +71,7 @@ public abstract class SLPCore {
 	/**
 	 * the default empty locale. Used for messages that don't specify a locale.
 	 */
-	static final Locale DEFAULT_LOCALE = new Locale("", "");
+	static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
 	/**
 	 * the port for SLP communication.
@@ -277,23 +278,26 @@ public abstract class SLPCore {
 			platform.logDebug("jSLP is using port: " + SLP_PORT);
 		}
 
-		try {
-			mtcSocket = new MulticastSocket(SLP_PORT);
-			mtcSocket.setTimeToLive(CONFIG.getMcastTTL());
-			if (CONFIG.getInterfaces() != null) {
-				try {
-					mtcSocket.setInterface(InetAddress.getByName(myIPs[0]));
-				} catch (Throwable t) {
+		// a pure UA doesn't need a multicast listener which is only required by an SA and DA
+		if(!CONFIG.isUAOnly()) {
+			try {
+				mtcSocket = new MulticastSocket(SLP_PORT);
+				mtcSocket.setTimeToLive(CONFIG.getMcastTTL());
+				if (CONFIG.getInterfaces() != null) {
+					try {
+						mtcSocket.setInterface(InetAddress.getByName(myIPs[0]));
+					} catch (Throwable t) {
 
+					}
 				}
+				mtcSocket.joinGroup(MCAST_ADDRESS);
+			} catch (BindException be) {
+				be.printStackTrace();
+				throw new RuntimeException("You have to be root to open port "
+						+ SLP_PORT);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			mtcSocket.joinGroup(MCAST_ADDRESS);
-		} catch (BindException be) {
-			be.printStackTrace();
-			throw new RuntimeException("You have to be root to open port "
-					+ SLP_PORT);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		String[] daAddresses = CONFIG.getDaAddresses();
@@ -334,49 +338,52 @@ public abstract class SLPCore {
 			}
 		}
 
-		// setup and start the multicast thread
-		multicastThread = new Thread() {
-			public void run() {
-				DatagramPacket packet;
-				byte[] bytes = new byte[SLPCore.CONFIG.getMTU()];
-				while (true) {
-					try {
-						packet = new DatagramPacket(bytes, bytes.length);
-						mtcSocket.receive(packet);
-						final SLPMessage reply = handleMessage(SLPMessage
-								.parse(packet.getAddress(), packet.getPort(),
-										new DataInputStream(
-												new ByteArrayInputStream(packet
-														.getData())), false));
-						if (reply != null) {
-							final byte[] repbytes = reply.getBytes();
-							DatagramPacket datagramPacket = new DatagramPacket(
-									repbytes, repbytes.length, reply.address,
-									reply.port);
-							mtcSocket.send(datagramPacket);
-							if (platform.isDebugEnabled()) {
-								platform.logDebug("SEND (" + reply.address
-										+ ":" + reply.port + ") "
-										+ reply.toString());
+		// a pure UA doesn't need a multicast listener which is only required by an SA and DA
+		if(!CONFIG.isUAOnly()) {
+			// setup and start the multicast thread
+			multicastThread = new Thread() {
+				public void run() {
+					DatagramPacket packet;
+					byte[] bytes = new byte[SLPCore.CONFIG.getMTU()];
+					while (true) {
+						try {
+							packet = new DatagramPacket(bytes, bytes.length);
+							mtcSocket.receive(packet);
+							final SLPMessage reply = handleMessage(SLPMessage
+									.parse(packet.getAddress(), packet.getPort(),
+											new DataInputStream(
+													new ByteArrayInputStream(packet
+															.getData())), false));
+							if (reply != null) {
+								final byte[] repbytes = reply.getBytes();
+								DatagramPacket datagramPacket = new DatagramPacket(
+										repbytes, repbytes.length, reply.address,
+										reply.port);
+								mtcSocket.send(datagramPacket);
+								if (platform.isDebugEnabled()) {
+									platform.logDebug("SEND (" + reply.address
+											+ ":" + reply.port + ") "
+											+ reply.toString());
+								}
+							} else {
+								if (platform.isDebugEnabled()) {
+									platform
+									.logDebug("Datagram couldn't be parsed as a SLPMessage");
+								}
 							}
-						} else {
-							if (platform.isDebugEnabled()) {
+						} catch (Exception e) {
+							if (platform.isErrorEnabled()) {
 								platform
-										.logDebug("Datagram couldn't be parsed as a SLPMessage");
+								.logError(
+										"Exception in Multicast Receiver Thread",
+										e);
 							}
-						}
-					} catch (Exception e) {
-						if (platform.isErrorEnabled()) {
-							platform
-									.logError(
-											"Exception in Multicast Receiver Thread",
-											e);
 						}
 					}
 				}
-			}
-		};
-		multicastThread.start();
+			};
+			multicastThread.start();
+		}
 
 		// check, if there is already a SLP daemon runnung on port 427
 		// that can be either a jSLP daemon, or an OpenSLP daemon or something
@@ -660,6 +667,7 @@ public abstract class SLPCore {
 				msg.xid = nextXid();
 			}
 			Socket socket = new Socket(msg.address, msg.port);
+			socket.setSoTimeout(CONFIG.getTCPTimeout());
 			DataOutputStream out = new DataOutputStream(socket
 					.getOutputStream());
 			DataInputStream in = new DataInputStream(socket.getInputStream());
@@ -782,10 +790,15 @@ public abstract class SLPCore {
 			msg.multicast = true;
 
 			// send to localhost, in case the OS does not support multicast over
-			// loopback
+			// loopback which can fail if no SA is running locally
 			msg.address = LOCALHOST;
-
-			replyQueue.add(sendMessageTCP(msg));
+			try {
+				replyQueue.add(sendMessageTCP(msg));
+			} catch (ServiceLocationException e) {
+				if(e.getErrorCode() != ServiceLocationException.NETWORK_ERROR) {
+					throw e;
+				}
+			}
 
 			msg.address = MCAST_ADDRESS;
 			ReplyMessage reply;

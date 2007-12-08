@@ -129,6 +129,8 @@ class SLPConfiguration {
 
 	private static final String CONVERGENCE_FAILERCOUNT_PROP = "net.slp.failercount";
 	
+	private static final String UA_ONLY_PROP = "net.slp.uaonly";
+	
 	private static String[] INTERFACES;
 
 	private static int PORT;
@@ -171,6 +173,8 @@ class SLPConfiguration {
 	
 	private static int CONVERGENCE_FAILERCOUNT;
 
+	private static boolean UA_ONLY;
+	
 	/**
 	 * create a new SLPConfiguration from properties.
 	 * 
@@ -254,6 +258,11 @@ class SLPConfiguration {
 		
 		CONVERGENCE_FAILERCOUNT = Integer.parseInt(props.getProperty(CONVERGENCE_FAILERCOUNT_PROP, DEFAULT_CONVERGENCE_FAILERCOUNT));
 
+		
+		
+		UA_ONLY = new Boolean(props.getProperty(UA_ONLY_PROP,
+				"false")).booleanValue();
+		
 		if (SECURITY_ENABLED) {
 			PUBLIC_KEY_CACHE = new HashMap(0);
 			PRIVATE_KEY_CACHE = new HashMap(0);
@@ -504,5 +513,17 @@ class SLPConfiguration {
 	 */
 	int getConvergenceFailerCount() {
 		return CONVERGENCE_FAILERCOUNT;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isUAOnly() {
+		return UA_ONLY;
+	}
+
+	public int getTCPTimeout() {
+		// TODO wire this to the properties if necessary
+		return 5000; // 5sec
 	}
 }

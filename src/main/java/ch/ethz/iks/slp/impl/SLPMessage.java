@@ -34,10 +34,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ProtocolException;
-import java.util.Locale;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
+
 import ch.ethz.iks.slp.ServiceLocationException;
 
 /**
@@ -181,7 +182,7 @@ public abstract class SLPMessage {
 		out.write(0);
 		out.write(0);
 		out.writeShort(xid);
-		out.writeUTF(locale.toString());
+		out.writeUTF(locale.getLanguage());
 	}
 
 	/**
@@ -312,10 +313,14 @@ public abstract class SLPMessage {
 			msg.funcID = funcID;
 			msg.locale = locale;
 			if (msg.getSize() != length) {
-				throw new ServiceLocationException(
-						ServiceLocationException.INTERNAL_SYSTEM_ERROR,
-						"Length of " + msg + " should be " + length + ", read "
+				if (SLPCore.platform.isErrorEnabled()) {
+					SLPCore.platform.logError("Length of " + msg + " should be " + length + ", read "
 								+ msg.getSize());
+				}
+//				throw new ServiceLocationException(
+//						ServiceLocationException.INTERNAL_SYSTEM_ERROR,
+//						"Length of " + msg + " should be " + length + ", read "
+//								+ msg.getSize());
 			}
 			return msg;
 		} catch (ProtocolException pe) {
@@ -334,7 +339,7 @@ public abstract class SLPMessage {
 	 * @return
 	 */
 	int getHeaderSize() {
-		return 14 + locale.toString().length();
+		return 14 + locale.getLanguage().length();
 	}
 
 	/**

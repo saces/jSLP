@@ -161,7 +161,7 @@ public class ServiceLocationException extends Exception
      *
      * @return the error code.
      */
-    final short getErrorCode() {
+    public final short getErrorCode() {
         return errorCode;
     }
 }
