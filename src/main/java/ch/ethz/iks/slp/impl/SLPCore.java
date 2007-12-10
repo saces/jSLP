@@ -271,7 +271,7 @@ public abstract class SLPCore {
 		MCAST_ADDRESS = mcast;
 	}
 
-	static void init() {
+	protected static void init() {
 		if (platform.isDebugEnabled()) {
 			platform.logDebug("jSLP is running on the following interfaces: "
 					+ java.util.Arrays.asList(myIPs));
