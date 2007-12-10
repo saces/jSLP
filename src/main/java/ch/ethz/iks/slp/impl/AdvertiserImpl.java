@@ -56,13 +56,20 @@ public final class AdvertiserImpl implements Advertiser {
 
 	/**
 	 * Constructor for AdvertiserImpl.
-	 * 
-	 * @param theLocale
-	 *            Locale.
 	 */
 	public AdvertiserImpl() {
 		locale = SLPCore.DEFAULT_LOCALE;
 	}
+	
+	/**
+	 * Constructor for AdvertiserImpl.
+	 * 
+	 * @param theLocale
+	 *            Locale.
+	 */
+	public AdvertiserImpl(final Locale locale) {
+		this.locale = locale;
+	}	
 
 	/**
 	 * Get the locale of this instance.

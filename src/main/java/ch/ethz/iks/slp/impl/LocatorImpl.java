@@ -57,12 +57,19 @@ public final class LocatorImpl implements Locator {
 
 	/**
 	 * create a new LocatorImpl instance.
+	 */
+	public LocatorImpl() {
+		locale = SLPCore.DEFAULT_LOCALE;
+	}
+	
+	/**
+	 * create a new LocatorImpl instance.
 	 * 
 	 * @param theLocale
 	 *            the Locale for this instance.
 	 */
-	public LocatorImpl() {
-		locale = SLPCore.DEFAULT_LOCALE;
+	public LocatorImpl(final Locale locale) {
+		this.locale = locale;
 	}
 
 	/**

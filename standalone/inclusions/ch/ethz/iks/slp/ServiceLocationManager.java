@@ -44,6 +44,7 @@ public final class ServiceLocationManager extends SLPCore {
 	 * hidden default constructor.
 	 */
 	private ServiceLocationManager() {
+		SLPCore.init();
 	}
 
 	/**
