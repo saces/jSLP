@@ -30,6 +30,7 @@ package ch.ethz.iks.slp;
 
 import java.util.Locale;
 import ch.ethz.iks.slp.impl.SLPCore;
+import ch.ethz.iks.slp.impl.StandalonePlatformAbstraction;
 
 /**
  * The central manager for SLP interaction. Application can get a Locator for UA
@@ -44,9 +45,15 @@ public final class ServiceLocationManager extends SLPCore {
 	 * hidden default constructor.
 	 */
 	private ServiceLocationManager() {
-		init();
 	}
 
+	public static void init() {
+		if(SLPCore.platform == null) {
+			SLPCore.platform = new StandalonePlatformAbstraction();
+			SLPCore.init();
+		}
+	}
+	
 	/**
 	 * get the refresh interval, that is the maximum over all DA's minimum
 	 * update intervals.
@@ -70,6 +77,7 @@ public final class ServiceLocationManager extends SLPCore {
 	 */
 	public static Locator getLocator(final Locale locale)
 			throws ServiceLocationException {
+		init();
 		if (locator != null) {
 			try {
 				return (Locator) locator.newInstance(new Object[] { locale });
@@ -96,6 +104,7 @@ public final class ServiceLocationManager extends SLPCore {
 	 */
 	public static Advertiser getAdvertiser(final Locale locale)
 			throws ServiceLocationException {
+		init();
 		if (advertiser != null) {
 			try {
 				return (Advertiser) advertiser

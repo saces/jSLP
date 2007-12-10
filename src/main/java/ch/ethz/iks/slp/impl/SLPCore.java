@@ -66,7 +66,7 @@ import ch.ethz.iks.slp.ServiceType;
  */
 public abstract class SLPCore {
 
-	static PlatformAbstraction platform;
+	protected static PlatformAbstraction platform;
 
 	/**
 	 * the default empty locale. Used for messages that don't specify a locale.
