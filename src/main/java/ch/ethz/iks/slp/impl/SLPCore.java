@@ -325,7 +325,7 @@ public abstract class SLPCore {
 										+ daAddresses[i] + " for the Scope, "
 										+ scopes[j]);
 							}
-							SLPUtils.addValue(dAs, scopes[i], daAddresses[i]);
+							SLPUtils.addValue(dAs, scopes[i].toLowerCase(), daAddresses[i]);
 						}
 					} catch (ServiceLocationException e) {
 						e.printStackTrace();
@@ -480,13 +480,14 @@ public abstract class SLPCore {
 			if (advert.statelessBootTimestamp == 0) {
 				for (Iterator iter = advert.scopeList.iterator(); iter
 						.hasNext();) {
-					SLPUtils.removeValue(SLPCore.dAs, iter.next(), advert.url);
+					String scope = ((String) iter.next()).toLowerCase();
+					SLPUtils.removeValue(SLPCore.dAs, scope.toLowerCase(), advert.url);
 					dASPIs.remove(advert.url);
 				}
 			} else {
 				for (Iterator iter = advert.scopeList.iterator(); iter
 						.hasNext();) {
-					String scope = (String) iter.next();
+					String scope = ((String) iter.next()).toLowerCase();
 
 					// If OpenSLP would strictly follow RFC 2608,
 					// it should only send a new statelessBootTimestamp

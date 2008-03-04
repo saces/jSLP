@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 import ch.ethz.iks.slp.ServiceLocationException;
 import ch.ethz.iks.slp.ServiceType;
 import ch.ethz.iks.slp.ServiceURL;
@@ -106,7 +107,8 @@ public final class SLPDaemonImpl implements SLPDaemon {
 		Service service = new Service(reg);
 
 		for (Iterator scopeIter = reg.scopeList.iterator(); scopeIter.hasNext();) {
-			Object scope = scopeIter.next();
+			String scope = (String) scopeIter.next();
+			scope = scope.toLowerCase();
 			synchronized (registeredServices) {
 				SLPUtils.addValue(registeredServices, scope, service);
 			}
@@ -208,7 +210,7 @@ public final class SLPDaemonImpl implements SLPDaemon {
 
 			for (int j = 0; j < services.length; j++) {
 				if (dereg.url.matches(services[j].url)) {
-					List daList = (List) SLPCore.dAs.get(scopes[i]);
+					List daList = (List) SLPCore.dAs.get(scopes[i].toLowerCase());
 					if (daList != null) {
 						for (Iterator daIter = daList.iterator(); daIter
 								.hasNext();) {

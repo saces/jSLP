@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import ch.ethz.iks.slp.Advertiser;
 import ch.ethz.iks.slp.Locator;
 import ch.ethz.iks.slp.ServiceLocationEnumeration;
 import ch.ethz.iks.slp.ServiceLocationException;
@@ -222,6 +224,7 @@ public final class LocatorImpl implements Locator {
 		ArrayList result = new ArrayList();
 		for (Iterator scopeIter = scopes.iterator(); scopeIter.hasNext();) {
 			String scope = (String) scopeIter.next();
+			scope = scope.toLowerCase();
 			List dAs = (List) SLPCore.dAs.get(scope);
 
 			if (SLPCore.platform.isDebugEnabled()) {
