@@ -27,6 +27,18 @@
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
+		<developer>
+			<id>lemmster</id>
+			<name>Markus Alexander Kuppe</name>
+			<email>jslp.sf.net_at_lemmster.de</email>
+			<url>http://www.lemmster.de</url>
+			<organization>Versant GmbH</organization>
+			<organizationUrl>http://www.versant.com</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
 	</developers>
 
 	<licenses>
