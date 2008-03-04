@@ -383,16 +383,16 @@ public abstract class SLPCore {
 				}
 			};
 			multicastThread.start();
-		}
-
-		// check, if there is already a SLP daemon runnung on port 427
-		// that can be either a jSLP daemon, or an OpenSLP daemon or something
-		// else. If not, try to start a new daemon instance.
-		if (daemonConstr != null) {
-			try {
-				daemon = (SLPDaemon) daemonConstr.newInstance(null);
-			} catch (Exception e) {
-				daemon = null;
+			
+			// check, if there is already a SLP daemon runnung on port 427
+			// that can be either a jSLP daemon, or an OpenSLP daemon or something
+			// else. If not, try to start a new daemon instance.
+			if (daemonConstr != null) {
+				try {
+					daemon = (SLPDaemon) daemonConstr.newInstance(null);
+				} catch (Exception e) {
+					daemon = null;
+				}
 			}
 		}
 
