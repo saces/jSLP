@@ -109,16 +109,27 @@
         <configuration>
           <osgiManifest>
             <bundleActivator>ch.ethz.iks.slp.impl.Activator</bundleActivator>
-            <bundleName>jslp-osgi</bundleName>
+            <bundleName>%plugin.name</bundleName>
 			<bundleSymbolicName>ch.ethz.iks.slp</bundleSymbolicName>
             <bundleDescription>jSLP, the pure Java Service Location Protocol implementation</bundleDescription>
-            <bundleVendor>Jan S. Rellermeyer, IKS, ETH Zurich</bundleVendor>
+            <bundleVendor>%plugin.provider</bundleVendor>
+            <bundleLocalization>plugin</bundleLocalization>
             <importPackage>org.osgi.framework, org.osgi.service.log</importPackage>
             <exportPackage>ch.ethz.iks.slp</exportPackage>
           </osgiManifest>
         </configuration>
       </plugin>
     </plugins>
+  	<resources>
+      <resource>
+        <targetPath>/</targetPath>
+        <filtering>false</filtering>
+        <directory>${basedir}/</directory>
+        <includes>
+          <include>plugin.properties</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
     
 	<reporting>
