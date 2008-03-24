@@ -3,7 +3,7 @@
 	<name>jSLP</name>
 	<groupId>ch.ethz.iks.slp</groupId>
 	<artifactId>jslp</artifactId>
-	<version>1.0.0.RC2</version>
+	<version>1.0.0.RC3</version>
 	<packaging>jar</packaging>
 	<description>jSLP is a pure Java implementation of RFC 2608, Service Location Protocol</description>
 	<url>http://jslp.sourceforge.net</url>
@@ -65,24 +65,14 @@
       		<id>iks-repository</id>
       		<name>ETH Zurich IKS Repository</name>
       		<url>http://www.flowsgi.inf.ethz.ch/repository/maven2/</url>
-    	</repository>
-    	<repository>
-          	<id>safehaus-repository</id>
-          	<name>Safehaus Repository</name>
-          	<url>http://m2.safehaus.org</url>
-    	</repository>
+    		</repository>
   	</repositories> 
   	<pluginRepositories>
     	<pluginRepository>
-      		<id>maven</id>
-      		<name>maven repository</name>
-      		<url>http://repo1.maven.org/maven2</url>
+      		<id>iks-repository</id>
+      		<name>ETH Zurich IKS Repository</name>
+      		<url>http://www.flowsgi.inf.ethz.ch/repository/maven2/</url>
     	</pluginRepository>  
-    	<pluginRepository>
-      		<id>apache.snapshots</id>
-      		<name>Apache Snapshot Plugins</name>
-      		<url>http://people.apache.org/repo/m2-snapshot-repository</url>
-    	</pluginRepository>
   	</pluginRepositories> 
 
 	<build>

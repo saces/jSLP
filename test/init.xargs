@@ -2,5 +2,5 @@
 
 -init
 
--istart file:target/jslp-osgi-1.0.0.RC2.jar
--istart file:runtimeTests/target/jslp-test-1.0.0.RC2.jar
+-istart file:target/jslp-osgi-1.0.0.RC3.jar
+-istart file:runtimeTests/target/jslp-test-1.0.0.RC3.jar
