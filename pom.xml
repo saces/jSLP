@@ -4,7 +4,7 @@
   <groupId>ch.ethz.iks.slp</groupId>
   <artifactId>jslp-osgi</artifactId>
   <version>1.0.0.RC3</version>
-  <packaging>osgi-bundle</packaging>
+  <packaging>bundle</packaging>
 
 	<url>http://jslp.sourceforge.net</url>
 
@@ -101,36 +101,32 @@
 	    		<debug>false</debug>
 	    	</configuration>
 	  </plugin>
+	  <!-- http://felix.apache.org/site/maven-bundle-plugin-bnd.html -->
       <plugin>
-        <groupId>org.apache.felix.plugins</groupId>
-        <artifactId>maven-osgi-plugin</artifactId>
+  	    <groupId>org.apache.felix</groupId>
+    	<artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
-		<version>0.9.0-incubator-SNAPSHOT</version>
         <configuration>
-          <osgiManifest>
-            <bundleActivator>ch.ethz.iks.slp.impl.Activator</bundleActivator>
-            <bundleName>%plugin.name</bundleName>
-			<bundleSymbolicName>ch.ethz.iks.slp</bundleSymbolicName>
-            <bundleDescription>jSLP, the pure Java Service Location Protocol implementation</bundleDescription>
-            <bundleVendor>%plugin.provider</bundleVendor>
-            <bundleLocalization>plugin</bundleLocalization>
-            <importPackage>org.osgi.framework, org.osgi.service.log</importPackage>
-            <exportPackage>ch.ethz.iks.slp</exportPackage>
-          </osgiManifest>
+	      	<instructions>
+				<Include-Resource>{maven-resources}, {maven-dependencies}, target/classes</Include-Resource>
+				<Bundle-Version>${pom.version}</Bundle-Version>
+				<_include>~META-INF/MANIFEST.MF</_include>
+    	  	</instructions>
         </configuration>
       </plugin>
     </plugins>
-  	<resources>
-      <resource>
-        <targetPath>/</targetPath>
-        <filtering>false</filtering>
-        <directory>${basedir}/</directory>
-        <includes>
-          <include>plugin.properties</include>
-        </includes>
-      </resource>
-    </resources>
-  </build>
+	<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+		    	<directory>.</directory>
+		        <includes>
+		        	<include>plugin.properties</include>
+		        </includes>
+			</resource>
+	    </resources>
+    </build>
     
 	<reporting>
     	<plugins>
@@ -179,6 +175,10 @@
     </repository>
   </repositories> 
   <pluginRepositories>
+    <pluginRepository>
+    	<id>apache snapshot</id>
+    	<url>http://people.apache.org/repo/m2-snapshot-repository</url>
+    </pluginRepository>
     <pluginRepository>
       <id>iks-repository</id>
       <name>ETH Zurich IKS Repository</name>
