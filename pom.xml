@@ -111,6 +111,8 @@
 				<Include-Resource>{maven-resources}, {maven-dependencies}, target/classes</Include-Resource>
 				<Bundle-Version>${pom.version}</Bundle-Version>
 				<_include>~META-INF/MANIFEST.MF</_include>
+				<!-- BND just produces Bundle-ManifestVersion: 2 headers which we don't want -->
+				<_removeheaders>Bundle-ManifestVersion</_removeheaders> 
     	  	</instructions>
         </configuration>
       </plugin>
@@ -118,12 +120,6 @@
 	<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-			</resource>
-			<resource>
-		    	<directory>.</directory>
-		        <includes>
-		        	<include>plugin.properties</include>
-		        </includes>
 			</resource>
 	    </resources>
     </build>

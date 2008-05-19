@@ -1,10 +1,8 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: %plugin.name
-Bundle-SymbolicName: ch.ethz.iks.slp;singleton:=true
+Bundle-Name: ch.ethz.iks.slp
+Bundle-SymbolicName: ch.ethz.iks.slp
 Bundle-Version: 1.0.0.qualifier
 Export-Package: ch.ethz.iks.slp
 Bundle-Activator: ch.ethz.iks.slp.impl.Activator
-Bundle-Vendor: %plugin.provider
+Bundle-Vendor: Jan S. Rellermeyer, IKS, ETH Zurich
 Import-Package: org.osgi.framework, org.osgi.service.log
-Bundle-ClassPath: .
