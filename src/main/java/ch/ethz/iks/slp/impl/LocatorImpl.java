@@ -240,6 +240,9 @@ public final class LocatorImpl implements Locator {
 					try {
 						SLPCore.dAs.wait(SLPCore.CONFIG.getWaitTime() / 4);
 					} catch (InterruptedException e) {
+						SLPCore.platform.logError(e.getMessage(), e);
+						// Restore the interrupted status as we're not the owner of the current thread
+						Thread.currentThread().interrupt();
 					}
 				}
 				dAs = (List) SLPCore.dAs.get(scope);
