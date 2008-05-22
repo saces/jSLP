@@ -85,7 +85,7 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 		}
 		try {
 			context.addServiceListener(this, "(" + Constants.OBJECTCLASS
-					+ "=org.osgi.service.log)");
+					+ "=org.osgi.service.log.LogService)");
 		} catch (InvalidSyntaxException i) {
 			i.printStackTrace();
 		}
