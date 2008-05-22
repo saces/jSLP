@@ -225,9 +225,7 @@ public abstract class SLPCore {
 			config = propFile.exists() ? new SLPConfiguration(propFile)
 					: new SLPConfiguration();
 		} catch (IOException e1) {
-			if (platform.isWarningEnabled()) {
-				platform.logWarning("Could not parse the property file", e1);
-			}
+			platform.logWarning("Could not parse the property file", e1);
 			config = new SLPConfiguration();
 		}
 		CONFIG = config;
@@ -272,11 +270,9 @@ public abstract class SLPCore {
 	}
 
 	protected static void init() {
-		if (platform.isDebugEnabled()) {
-			platform.logDebug("jSLP is running on the following interfaces: "
+		platform.logDebug("jSLP is running on the following interfaces: "
 					+ java.util.Arrays.asList(myIPs));
-			platform.logDebug("jSLP is using port: " + SLP_PORT);
-		}
+		platform.logDebug("jSLP is using port: " + SLP_PORT);
 
 		// a pure UA doesn't need a multicast listener which is only required by an SA and DA
 		if(!CONFIG.isUAOnly()) {
@@ -292,11 +288,11 @@ public abstract class SLPCore {
 				}
 				mtcSocket.joinGroup(MCAST_ADDRESS);
 			} catch (BindException be) {
-				be.printStackTrace();
+				platform.logError(be.getMessage(), be);
 				throw new RuntimeException("You have to be root to open port "
 						+ SLP_PORT);
 			} catch (Exception e) {
-				e.printStackTrace();
+				platform.logError(e.getMessage(), e);
 			}
 		}
 
@@ -320,21 +316,19 @@ public abstract class SLPCore {
 						String[] scopes = (String[]) daa.scopeList
 								.toArray(new String[daa.scopeList.size()]);
 						for (int j = 0; j < scopes.length; j++) {
-							if (platform.isDebugEnabled()) {
-								platform.logDebug("jSLP is adding DA, "
+							platform.logDebug("jSLP is adding DA, "
 										+ daAddresses[i] + " for the Scope, "
 										+ scopes[j]);
-							}
 							SLPUtils.addValue(dAs, scopes[i].toLowerCase(), daAddresses[i]);
 						}
 					} catch (ServiceLocationException e) {
-						e.printStackTrace();
+						platform.logWarning("Error communitcating with " + daAddresses[i], e);
 					} catch (UnknownHostException e) {
-						e.printStackTrace();
+						platform.logWarning("Unknown net.slp.DAAddresses address: " + daAddresses[i], e);
 					}
 				}
 			} catch (IllegalArgumentException ise) {
-				// does not happen, no filter set
+				platform.logDebug("May never happen", ise);
 			}
 		}
 
@@ -360,24 +354,18 @@ public abstract class SLPCore {
 										repbytes, repbytes.length, reply.address,
 										reply.port);
 								mtcSocket.send(datagramPacket);
-								if (platform.isDebugEnabled()) {
-									platform.logDebug("SEND (" + reply.address
+								platform.logDebug("SEND (" + reply.address
 											+ ":" + reply.port + ") "
 											+ reply.toString());
-								}
 							} else {
-								if (platform.isDebugEnabled()) {
-									platform
+								platform
 									.logDebug("Datagram couldn't be parsed as a SLPMessage");
-								}
 							}
 						} catch (Exception e) {
-							if (platform.isErrorEnabled()) {
-								platform
+							platform
 								.logError(
 										"Exception in Multicast Receiver Thread",
 										e);
-							}
 						}
 					}
 				}
@@ -401,9 +389,7 @@ public abstract class SLPCore {
 			try {
 				daLookup(null);
 			} catch (Exception e) {
-				if (platform.isErrorEnabled()) {
-					platform.logError("Exception in initial DA lookup", e);
-				}
+				platform.logError("Exception in initial DA lookup", e);
 			}
 		}
 
@@ -418,7 +404,7 @@ public abstract class SLPCore {
 		try {
 			return InetAddress.getByName(myIPs[0]);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			platform.logError("Unknown net.slp.interfaces address: " + myIPs[0], e);
 			return null;
 		}
 	}
@@ -449,20 +435,16 @@ public abstract class SLPCore {
 			return null;
 		}
 
-		if (platform.isTraceEnabled() && CONFIG.getTraceMessage()) {
-			platform.logTrace("RECEIVED (" + message.address + ":"
+		platform.logTraceMessage("RECEIVED (" + message.address + ":"
 					+ message.port + ") " + message);
-		}
 
 		switch (message.funcID) {
 		case SLPMessage.DAADVERT:
 			// drop message, if noDADiscovery is set
 			if (noDiscovery) {
-				if (platform.isTraceEnabled() && CONFIG.getTraceDrop()) {
-					platform.logTrace("DROPPED (" + message.address + ":"
+				platform.logTraceDrop("DROPPED (" + message.address + ":"
 							+ message.port + ") " + message.toString()
 							+ "(reason: noDADiscovery is set");
-				}
 				return null;
 			}
 
@@ -517,9 +499,7 @@ public abstract class SLPCore {
 				}
 
 			}
-			if (platform.isDebugEnabled()) {
-				platform.logDebug("NEW DA LIST: " + dAs);
-			}
+			platform.logDebug("NEW DA LIST: " + dAs);
 
 			return null;
 
@@ -537,8 +517,8 @@ public abstract class SLPCore {
 						queue.notifyAll();
 					}
 					return null;
-				} else if (platform.isTraceEnabled() && CONFIG.getTraceReg()) {
-					platform.logTrace("SRVTYPEREPLY recieved ("
+				} else {
+					platform.logTraceReg("SRVTYPEREPLY recieved ("
 							+ message.address + ":" + message.port + ") "
 							+ message.toString()
 							+ " but not replyListeners present anymore");
@@ -555,11 +535,9 @@ public abstract class SLPCore {
 			for (int i = 0; i < SLPCore.myIPs.length; i++) {
 				if (((RequestMessage) message).prevRespList
 						.contains(SLPCore.myIPs[i])) {
-					if (platform.isTraceEnabled() && CONFIG.getTraceDrop()) {
-						platform.logTrace("DROPPED (" + message.address + ":"
+					platform.logTraceDrop("DROPPED (" + message.address + ":"
 								+ message.port + ") " + message.toString()
 								+ "(udp multicast)");
-					}
 					return null;
 				}
 			}
@@ -605,12 +583,13 @@ public abstract class SLPCore {
 	 *             in case of network errors.
 	 */
 	static void daLookup(final List scopes) throws ServiceLocationException {
+		int i = 0;
 		try {
 			// change by TomoTherapy Inc
 			// added loop for each IP for each interface
 			// used 1.4 SocketAddress
 			// altered by Jan to be backwards compatible with Java 2
-			for (int i = 0; i < myIPs.length; i++) {
+			for (; i < myIPs.length; i++) {
 				// create a socket bound to the next ip address
 				final InetAddress addr = InetAddress.getByName(myIPs[i]);
 				DatagramSocket socket = new DatagramSocket(0, addr);
@@ -624,9 +603,7 @@ public abstract class SLPCore {
 				byte[] bytes = sreq.getBytes();
 				DatagramPacket d = new DatagramPacket(bytes, bytes.length,
 						MCAST_ADDRESS, SLP_PORT);
-				if (platform.isTraceEnabled() && CONFIG.getTraceMessage()) {
-					platform.logTrace("SENT " + sreq + "(udp multicast)");
-				}
+				platform.logTraceMessage("SENT " + sreq + "(udp multicast)");
 				setupReceiverThread(socket, CONFIG.getWaitTime(), sreq);
 				try {
 					socket.send(d);
@@ -638,15 +615,17 @@ public abstract class SLPCore {
 					remaining.remove(faulty);
 					myIPs = (String[]) remaining.toArray(new String[remaining
 							.size()]);
-					if (platform.isDebugEnabled()) {
-						platform.logDebug("Blacklisting IP " + faulty);
-					}
+					platform.logDebug("Blacklisting IP " + faulty);
 				}
 			}
 		} catch (IllegalArgumentException ise) {
-			// does not happen, no filter set
+			platform.logDebug("May never happen, no filter set", ise);
+		} catch (UnknownHostException uhe) {
+			platform.logWarning("Unknown net.slp.interfaces address: " + myIPs[i], uhe);
+			throw new ServiceLocationException(
+					ServiceLocationException.NETWORK_ERROR, uhe.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			platform.logWarning("Error connecting to: " + myIPs[i], e);
 			throw new ServiceLocationException(
 					ServiceLocationException.NETWORK_ERROR, e.getMessage());
 		}
@@ -718,11 +697,9 @@ public abstract class SLPCore {
 
 			dsocket.send(packet);
 
-			if (platform.isTraceEnabled() && CONFIG.getTraceMessage()) {
-				platform.logTrace("SENT (" + msg.address + ":" + msg.port + ") "
+			platform.logTraceMessage("SENT (" + msg.address + ":" + msg.port + ") "
 						+ msg + " (via udp port " + dsocket.getLocalPort()
 						+ ")");
-			}
 
 			// if no reply is expected, return
 			if (!expectReply) {
@@ -744,15 +721,13 @@ public abstract class SLPCore {
 			// Overflow, retry with TCP
 			return sendMessageTCP(msg);
 		} catch (IOException ioe) {
-			if (platform.isErrorEnabled()) {
-				platform.logError("Exception during sending of " + msg);
-				platform.logError("to " + msg.address + ":" + msg.port);
-				platform.logError("Exception:", ioe);
-			}
+			platform.logError("Exception during sending of " + msg);
+			platform.logError("to " + msg.address + ":" + msg.port);
+			platform.logError("Exception:", ioe);
 			throw new ServiceLocationException(
 					ServiceLocationException.NETWORK_ERROR, ioe.getMessage());
 		} catch (Throwable t) {
-			t.printStackTrace();
+			platform.logDebug(t.getMessage(), t);
 			throw new ServiceLocationException((short) 1, t.getMessage());
 		}
 	}
@@ -851,9 +826,7 @@ public abstract class SLPCore {
 						break;
 					}
 
-					if (platform.isTraceEnabled() && CONFIG.getTraceMessage()) {
-						platform.logTrace("SENT " + msg);
-					}
+					platform.logTraceMessage("SENT " + msg);
 
 					/**
 					 * @fix: bug #1518729. Changed processing of the replyQueue.
@@ -911,15 +884,13 @@ public abstract class SLPCore {
 				replyListeners.remove(queryXID);
 			}
 
-			if (platform.isDebugEnabled()) {
-				platform.logDebug("convergence for xid=" + msg.xid
+			platform.logDebug("convergence for xid=" + msg.xid
 						+ " finished after "
 						+ (System.currentTimeMillis() - start)
 						+ " ms, result: " + responses);
-			}
 			return responses;
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			platform.logDebug(ioe.getMessage(), ioe);
 			throw new ServiceLocationException(
 					ServiceLocationException.NETWORK_ERROR, ioe.getMessage());
 		}
@@ -963,10 +934,8 @@ public abstract class SLPCore {
 						int soTimeout = (int) (l < 0 ? 1 : l);
 						socket.setSoTimeout(soTimeout);
 					} catch (SocketException e1) {
-						if (platform.isErrorEnabled()) {
-							platform.logError(
+						platform.logError(
 									"Exception in mcast receiver thread", e1);
-						}
 						return;
 					}
 
@@ -977,7 +946,7 @@ public abstract class SLPCore {
 					} catch (InterruptedIOException iioe) {
 						continue;
 					} catch (IOException e) {
-						e.printStackTrace();
+						platform.logDebug(e.getMessage(), e);
 						return;
 					}
 					final DataInputStream in = new DataInputStream(
@@ -996,7 +965,7 @@ public abstract class SLPCore {
 						} catch (ServiceLocationException e) {
 						}
 					} catch (ServiceLocationException e) {
-						e.printStackTrace();
+						platform.logDebug(e.getMessage(), e);
 					}
 				}
 

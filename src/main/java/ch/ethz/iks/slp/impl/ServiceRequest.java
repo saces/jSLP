@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 import ch.ethz.iks.slp.ServiceLocationException;
 import ch.ethz.iks.slp.ServiceType;
 import ch.ethz.iks.slp.impl.filter.Filter;
@@ -41,7 +42,7 @@ import ch.ethz.iks.slp.impl.filter.Filter;
 /**
  * ServiceRequest message is used to find services in the network.
  * 
- * @author Jan S. Rellermeyer, IKS, ETH Zürich
+ * @author Jan S. Rellermeyer, IKS, ETH Zï¿½rich
  * @since 0.1
  */
 class ServiceRequest extends RequestMessage {
@@ -112,10 +113,8 @@ class ServiceRequest extends RequestMessage {
 			predicate = "".equals(filterStr) ? null : SLPCore.platform
 					.createFilter(filterStr);
 		} catch (IllegalArgumentException ise) {
-			if (SLPCore.platform.isErrorEnabled()) {
-				SLPCore.platform.logError("Invalid filter in incoming message "
+			SLPCore.platform.logError("Invalid filter in incoming message "
 						+ xid, ise);
-			}
 		}
 		spi = input.readUTF();
 	}

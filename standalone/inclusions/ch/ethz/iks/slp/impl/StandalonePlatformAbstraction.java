@@ -64,38 +64,6 @@ public class StandalonePlatformAbstraction implements PlatformAbstraction {
 
 	/**
 	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#isDebugEnabled()
-	 */
-	public boolean isDebugEnabled() {
-		return log.isDebugEnabled();
-	}
-
-	/**
-	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#isErrorEnabled()
-	 */
-	public boolean isErrorEnabled() {
-		return log.isErrorEnabled();
-	}
-
-	/**
-	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#isTraceEnabled()
-	 */
-	public boolean isTraceEnabled() {
-		return log.isTraceEnabled();
-	}
-
-	/**
-	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#isWarningEnabled()
-	 */
-	public boolean isWarningEnabled() {
-		return log.isWarnEnabled();
-	}
-
-	/**
-	 * 
 	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logDebug(java.lang.String)
 	 */
 	public void logDebug(final String message) {
@@ -128,21 +96,31 @@ public class StandalonePlatformAbstraction implements PlatformAbstraction {
 		log.error(message, exception);
 	}
 
-	/**
-	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTrace(java.lang.String)
+	/* (non-Javadoc)
+	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTraceDrop(java.lang.String)
 	 */
-	public void logTrace(final String message) {
-		log.trace(message);
+	public void logTraceDrop(String string) {
+		if(SLPCore.CONFIG.getTraceDrop()) {
+			log.trace(string);
+		}
 	}
 
-	/**
-	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTrace(java.lang.String,
-	 *      java.lang.Throwable)
+	/* (non-Javadoc)
+	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTraceMessage(java.lang.String)
 	 */
-	public void logTrace(final String message, final Throwable exception) {
-		log.trace(message, exception);
+	public void logTraceMessage(String string) {
+		if(SLPCore.CONFIG.getTraceMessage()) {
+			log.trace(string);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTraceReg(java.lang.String)
+	 */
+	public void logTraceReg(String string) {
+		if(SLPCore.CONFIG.getTraceReg()) {
+			log.trace(string);
+		}
 	}
 
 	/**
@@ -161,5 +139,4 @@ public class StandalonePlatformAbstraction implements PlatformAbstraction {
 	public void logWarning(final String message, final Throwable exception) {
 		log.warn(message, exception);
 	}
-
 }

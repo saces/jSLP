@@ -227,10 +227,8 @@ public final class LocatorImpl implements Locator {
 			scope = scope.toLowerCase();
 			List dAs = (List) SLPCore.dAs.get(scope);
 
-			if (SLPCore.platform.isDebugEnabled()) {
-				SLPCore.platform
+			SLPCore.platform
 						.logDebug("DAS FOR SCOPE " + scope + ": " + dAs);
-			}
 
 			// no DA for the scope known ?
 			// try to find one
@@ -294,10 +292,8 @@ public final class LocatorImpl implements Locator {
 					return reply.getResult();
 				}
 			} catch (Exception e) {
-				if (SLPCore.platform.isErrorEnabled()) {
-					SLPCore.platform.logError(e.getMessage(), e
+				SLPCore.platform.logError(e.getMessage(), e
 							.fillInStackTrace());
-				}
 				// something went wrong.
 				// remove DA from list.
 				final Object url = dAaddresses.get(index);

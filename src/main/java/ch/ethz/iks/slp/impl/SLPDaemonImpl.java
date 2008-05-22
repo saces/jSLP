@@ -90,9 +90,7 @@ public final class SLPDaemonImpl implements SLPDaemon {
 	public SLPDaemonImpl() throws Exception {
 		new TcpServerThread();
 		new ServiceDisposalThread();
-		if (SLPCore.platform.isDebugEnabled()) {
-			SLPCore.platform.logDebug("jSLP daemon starting ...");
-		}
+		SLPCore.platform.logDebug("jSLP daemon starting ...");
 	}
 
 	/**
@@ -129,10 +127,7 @@ public final class SLPDaemonImpl implements SLPDaemon {
 				}
 			}
 
-			if (SLPCore.platform.isTraceEnabled()
-					&& SLPCore.CONFIG.getTraceReg()) {
-				SLPCore.platform.logTrace("REGISTERED " + reg.url);
-			}
+			SLPCore.platform.logTraceReg("REGISTERED " + reg.url);
 
 			// register the service with all known DAs in the scopes
 			List daList = (List) SLPCore.dAs.get(scope);
@@ -153,10 +148,8 @@ public final class SLPDaemonImpl implements SLPDaemon {
 					}
 					daList = (List) SLPCore.dAs.get(scope);
 				} catch (ServiceLocationException sle) {
-					if (SLPCore.platform.isErrorEnabled()) {
-						SLPCore.platform.logError(sle.getMessage(), sle
+					SLPCore.platform.logError(sle.getMessage(), sle
 								.fillInStackTrace());
-					}
 				}
 			}
 
@@ -170,19 +163,14 @@ public final class SLPDaemonImpl implements SLPDaemon {
 				for (int i = 0; i < dAs.length; i++) {
 					try {
 						announceService(dAs[i], announcement);
-						if (SLPCore.platform.isTraceEnabled()
-								&& SLPCore.CONFIG.getTraceReg()) {
-							SLPCore.platform.logTrace("ANNOUNCED "
+						SLPCore.platform.logTraceReg("ANNOUNCED "
 									+ announcement.url + " to " + dAs[i]);
-						}
 					} catch (ServiceLocationException e) {
 						// remove DA from list
 						SLPUtils.removeValueFromAll(SLPCore.dAs, dAs[i]);
 						SLPCore.dASPIs.remove(dAs[i]);
-						if (SLPCore.platform.isErrorEnabled()) {
-							SLPCore.platform.logError(e.getMessage(), e
+						SLPCore.platform.logError(e.getMessage(), e
 									.fillInStackTrace());
-						}
 					}
 				}
 			}
@@ -267,11 +255,8 @@ public final class SLPDaemonImpl implements SLPDaemon {
 
 		String via = msg.tcp ? " (tcp)" : " (udp)";
 
-		if (SLPCore.platform.isTraceEnabled()
-				&& SLPCore.CONFIG.getTraceMessage()) {
-			SLPCore.platform.logTrace("RECEIVED (" + msg.address + ":"
+		SLPCore.platform.logTraceMessage("RECEIVED (" + msg.address + ":"
 					+ msg.port + ") " + msg.toString() + via);
-		}
 
 		ReplyMessage reply = null;
 
@@ -405,11 +390,9 @@ public final class SLPDaemonImpl implements SLPDaemon {
 		case SLPMessage.SRVACK:
 			final ReplyMessage rep = (ReplyMessage) msg;
 			if (rep.errorCode != 0) {
-				if (SLPCore.platform.isWarningEnabled()) {
-					SLPCore.platform.logWarning(msg.address
+				SLPCore.platform.logWarning(msg.address
 							+ " replied with error code " + rep.errorCode
 							+ " (" + rep + ")");
-				}
 			}
 			return null;
 
@@ -447,17 +430,13 @@ public final class SLPDaemonImpl implements SLPDaemon {
 								Arrays.asList(new Object[] { scope }), SLPUtils
 										.dictToAttrList(service.attributes),
 								SLPCore.DEFAULT_LOCALE);
-						if (SLPCore.platform.isDebugEnabled()) {
-							SLPCore.platform.logDebug("Registering "
+						SLPCore.platform.logDebug("Registering "
 									+ service.url + " with new DA "
 									+ advert.url);
-						}
 						announceService(advert.url, reg);
 					} catch (ServiceLocationException e) {
-						if (SLPCore.platform.isErrorEnabled()) {
-							SLPCore.platform.logError(e.getMessage(), e
+						SLPCore.platform.logError(e.getMessage(), e
 									.fillInStackTrace());
-						}
 					}
 				}
 			}
@@ -486,10 +465,8 @@ public final class SLPDaemonImpl implements SLPDaemon {
 			}
 			handleMessage(SLPCore.sendMessage(reg, true));
 		} catch (UnknownHostException e) {
-			if (SLPCore.platform.isErrorEnabled()) {
-				SLPCore.platform.logError("Service announcement to "
+			SLPCore.platform.logError("Service announcement to "
 						+ dAAddress + " failed. ", e.fillInStackTrace());
-			}
 		}
 	}
 
@@ -524,12 +501,9 @@ public final class SLPDaemonImpl implements SLPDaemon {
 
 					ReplyMessage reply = handleMessage(msg);
 					if (reply != null) {
-						if (SLPCore.platform.isTraceEnabled()
-								&& SLPCore.CONFIG.getTraceMessage()) {
-							SLPCore.platform.logTrace("SEND REPLY ("
+						SLPCore.platform.logTraceMessage("SEND REPLY ("
 									+ reply.address + ":" + reply.port + ") "
 									+ reply);
-						}
 
 						DataOutputStream out = new DataOutputStream(con
 								.getOutputStream());
@@ -546,10 +520,8 @@ public final class SLPDaemonImpl implements SLPDaemon {
 					in.close();
 					con.close();
 				} catch (Exception ioe) {
-					if (SLPCore.platform.isErrorEnabled()) {
-						SLPCore.platform.logError(
+					SLPCore.platform.logError(
 								"Exception in TCP receiver thread", ioe);
-					}
 				}
 			}
 		}
@@ -578,10 +550,8 @@ public final class SLPDaemonImpl implements SLPDaemon {
 					synchronized (serviceDisposalQueue) {
 						if (serviceDisposalQueue.isEmpty()) {
 							// nothing to do, sleep until something arrives
-							if (SLPCore.platform.isDebugEnabled()) {
-								SLPCore.platform
+							SLPCore.platform
 										.logDebug("ServiceDisposalThread sleeping ...");
-							}
 							serviceDisposalQueue.wait();
 						} else {
 							// we have work, do everything that is due
@@ -599,18 +569,13 @@ public final class SLPDaemonImpl implements SLPDaemon {
 								try {
 									deregisterService(dereg);
 								} catch (ServiceLocationException sle) {
-									if (SLPCore.platform.isErrorEnabled()) {
-										SLPCore.platform.logError(sle
+									SLPCore.platform.logError(sle
 												.getMessage(), sle
 												.fillInStackTrace());
-									}
 								}
-								if (SLPCore.platform.isTraceEnabled()
-										&& SLPCore.CONFIG.getTraceReg()) {
-									SLPCore.platform
-											.logTrace("disposed service "
+								SLPCore.platform
+											.logTraceReg("disposed service "
 													+ service);
-								}
 								serviceDisposalQueue.remove(nextActivity);
 							}
 							if (!serviceDisposalQueue.isEmpty()) {
@@ -623,12 +588,10 @@ public final class SLPDaemonImpl implements SLPDaemon {
 								long waitTime = nextActivity.longValue()
 										- System.currentTimeMillis();
 								if (waitTime > 0) {
-									if (SLPCore.platform.isDebugEnabled()) {
-										SLPCore.platform
+									SLPCore.platform
 												.logDebug("sleeping for "
 														+ waitTime / 1000
 														+ " seconds.");
-									}
 									serviceDisposalQueue.wait(waitTime);
 								}
 							}

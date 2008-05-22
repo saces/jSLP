@@ -39,13 +39,6 @@ import ch.ethz.iks.slp.impl.filter.Filter;
 public interface PlatformAbstraction {
 
 	/**
-	 * Is debug enabled?
-	 * 
-	 * @return true, if debug is enabled and a log implementation is available.
-	 */
-	boolean isDebugEnabled();
-
-	/**
 	 * Write a debug message to the log.
 	 * 
 	 * @param message
@@ -64,36 +57,28 @@ public interface PlatformAbstraction {
 	void logDebug(String message, Throwable exception);
 
 	/**
-	 * Is trace enabled?
-	 * 
-	 * @return true if trace is enabled and a log implementation is available.
-	 */
-	boolean isTraceEnabled();
-
-	/**
-	 * Write a trace message to the log.
+	 * Trace a generic message to the log.
 	 * 
 	 * @param message
 	 *            the message.
 	 */
-	void logTrace(String message);
+	void logTraceMessage(String string);
 
 	/**
-	 * Write a trace message to the log.
+	 * Trace a registration to the log.
 	 * 
 	 * @param message
 	 *            the message.
-	 * @param exception
-	 *            an exception.
 	 */
-	void logTrace(String message, Throwable exception);
+	void logTraceReg(String string);
 
 	/**
-	 * Is warning enabled?
+	 * Trace a drop to the log.
 	 * 
-	 * @return true if warning is enabled and a log implementation is available.
+	 * @param message
+	 *            the message.
 	 */
-	boolean isWarningEnabled();
+	void logTraceDrop(String string);
 
 	/**
 	 * Write a warning message to the log.
@@ -112,13 +97,6 @@ public interface PlatformAbstraction {
 	 *            an exception.
 	 */
 	void logWarning(String message, Throwable exception);
-
-	/**
-	 * Is error enabled?
-	 * 
-	 * @return true if error is enabled and a log implementation is available.
-	 */
-	boolean isErrorEnabled();
 
 	/**
 	 * Write an error message to the log.
@@ -146,5 +124,4 @@ public interface PlatformAbstraction {
 	 * @return an LDAP filter object.
 	 */
 	Filter createFilter(String filterString);
-
 }

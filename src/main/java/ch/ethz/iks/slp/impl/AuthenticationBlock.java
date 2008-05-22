@@ -36,6 +36,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.util.ArrayList;
 import java.util.List;
+
 import ch.ethz.iks.slp.ServiceLocationException;
 
 /**
@@ -125,17 +126,13 @@ class AuthenticationBlock {
 	private void sign() throws ServiceLocationException {
 		try {
 			PrivateKey privateKey = SLPCore.CONFIG.getPrivateKey(spi);
-			if (SLPCore.platform.isDebugEnabled()) {
-				SLPCore.platform.logDebug("Signing with SPI: " + spi);
-			}
+			SLPCore.platform.logDebug("Signing with SPI: " + spi);
 			Signature signature = Signature.getInstance("SHA1withDSA");
 			signature.initSign(privateKey);
 			signature.update(data);
 			sig = signature.sign();
 		} catch (Exception e) {
-			if (SLPCore.platform.isErrorEnabled()) {
-				SLPCore.platform.logError(e.getMessage(), e.fillInStackTrace());
-			}
+			SLPCore.platform.logError(e.getMessage(), e.fillInStackTrace());
 			throw new ServiceLocationException(
 					ServiceLocationException.AUTHENTICATION_FAILED,
 					"Could not sign data");
@@ -177,17 +174,13 @@ class AuthenticationBlock {
 			signature.initVerify(publicKey);
 			signature.update(verData);
 			boolean success = signature.verify(sig);
-			if (SLPCore.platform.isDebugEnabled()) {
-				SLPCore.platform.logDebug((success ? "Verified with SPI: "
+			SLPCore.platform.logDebug((success ? "Verified with SPI: "
 						: "Verification failed with SPI: ")
 						+ spi);
-			}
 
 			return success;
 		} catch (Exception e) {
-			if (SLPCore.platform.isErrorEnabled()) {
-				SLPCore.platform.logError(e.getMessage(), e.fillInStackTrace());
-			}
+			SLPCore.platform.logError(e.getMessage(), e.fillInStackTrace());
 			throw new ServiceLocationException(
 					ServiceLocationException.AUTHENTICATION_FAILED,
 					"Could not verify data with SPI: " + spi);

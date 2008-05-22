@@ -35,6 +35,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 
 import ch.ethz.iks.slp.impl.filter.Filter;
@@ -55,12 +56,7 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 	/**
 	 * 
 	 */
-	private LogService log;
-
-	/**
-	 * 
-	 */
-	private boolean debug;
+	private LogService log = new NullPatternLogService();		
 
 	/**
 	 * Constructor.
@@ -71,24 +67,26 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 	 *            the LogService, or null.
 	 * @param debug
 	 *            true if debugging is enabled.
+	 * @throws InvalidSyntaxException 
+	 * 				may never happen
 	 */
-	OSGiPlatformAbstraction(BundleContext context, LogService log, boolean debug) {
+	OSGiPlatformAbstraction(BundleContext context) throws InvalidSyntaxException {
 		this.context = context;
-		this.log = log;
-		this.debug = debug;
-		if (log != null) {
-			if (debug) {
-				log.log(LogService.LOG_INFO, "DEBUG OUTPUTS ENABLED");
-			} else {
-				log.log(LogService.LOG_INFO, "DEBUG OUTPUTS DISABLED");
-			}
+
+		// initially get the LogService
+		final ServiceReference sref = context
+				.getServiceReference(LogService.class.getName());
+		if (sref != null) {
+			this.log = (LogService) context.getService(sref);
 		}
-		try {
-			context.addServiceListener(this, "(" + Constants.OBJECTCLASS
-					+ "=org.osgi.service.log.LogService)");
-		} catch (InvalidSyntaxException i) {
-			i.printStackTrace();
-		}
+
+		// debug?
+		logWarning("DEBUG OUTPUT: " + Boolean.toString(SLPCore.CONFIG.getDebugEnabled()));
+		
+		// track the LogService for life cycle events
+		context.addServiceListener(this, "(" + Constants.OBJECTCLASS + "=" + LogService.class.getName() + ")");
+
+		logDebug("jSLP OSGi started.");
 	}
 
 	/**
@@ -109,41 +107,8 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 				}
 			};
 		} catch (InvalidSyntaxException e) {
-			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
-	}
-
-	/**
-	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#isDebugEnabled()
-	 */
-	public boolean isDebugEnabled() {
-		return log != null && debug;
-	}
-
-	/**
-	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#isErrorEnabled()
-	 */
-	public boolean isErrorEnabled() {
-		return log != null;
-	}
-
-	/**
-	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#isTraceEnabled()
-	 */
-	public boolean isTraceEnabled() {
-		return log != null;
-	}
-
-	/**
-	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#isWarningEnabled()
-	 */
-	public boolean isWarningEnabled() {
-		return log != null;
 	}
 
 	/**
@@ -151,7 +116,9 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logDebug(java.lang.String)
 	 */
 	public void logDebug(String message) {
-		log.log(LogService.LOG_DEBUG, message);
+		if(SLPCore.CONFIG.getDebugEnabled()) {
+			log.log(LogService.LOG_DEBUG, message);
+		}
 	}
 
 	/**
@@ -160,8 +127,9 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 	 *      java.lang.Throwable)
 	 */
 	public void logDebug(String message, Throwable exception) {
-		log.log(LogService.LOG_DEBUG, message, exception);
-
+		if(SLPCore.CONFIG.getDebugEnabled()) {
+			log.log(LogService.LOG_DEBUG, message, exception);
+		}
 	}
 
 	/**
@@ -170,7 +138,6 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 	 */
 	public void logError(String message) {
 		log.log(LogService.LOG_ERROR, message);
-
 	}
 
 	/**
@@ -184,19 +151,32 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 
 	/**
 	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTrace(java.lang.String)
+	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTraceMessage(java.lang.String)
 	 */
-	public void logTrace(String message) {
-		log.log(LogService.LOG_INFO, message);
+	public void logTraceMessage(String message) {
+		if(SLPCore.CONFIG.getTraceMessage()) {
+			log.log(LogService.LOG_INFO, message);
+		}
 	}
 
 	/**
 	 * 
-	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTrace(java.lang.String,
-	 *      java.lang.Throwable)
+	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTraceDrop(java.lang.String)
 	 */
-	public void logTrace(String message, Throwable exception) {
-		log.log(LogService.LOG_INFO, message, exception);
+	public void logTraceDrop(String message) {
+		if(SLPCore.CONFIG.getTraceDrop()) {
+			log.log(LogService.LOG_INFO, message);
+		}
+	}
+
+	/**
+	 * 
+	 * @see ch.ethz.iks.slp.impl.PlatformAbstraction#logTraceMessage(java.lang.String)
+	 */
+	public void logTraceReg(String message) {
+		if(SLPCore.CONFIG.getTraceReg()) {
+			log.log(LogService.LOG_INFO, message);
+		}
 	}
 
 	/**
@@ -226,8 +206,32 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 			log = (LogService) context.getService(event.getServiceReference());
 			return;
 		case ServiceEvent.UNREGISTERING:
-			log = null;
+			log = new NullPatternLogService();
 		default:
+		}
+	}
+	
+	// if no LogService is present, we use a dummy log
+	private class NullPatternLogService implements LogService {
+
+		public void log(int level, String message) {
+			if(level == LogService.LOG_ERROR || level == LogService.LOG_WARNING) {
+				System.err.println(message);
+			} else {
+				System.out.println(message);
+			}
+		}
+
+		public void log(int level, String message, Throwable exception) {
+			log(level, message + exception.getMessage());
+		}
+
+		public void log(ServiceReference sr, int level, String message) {
+			log(null, level, message);
+		}
+
+		public void log(ServiceReference sr, int level, String message, Throwable t) {
+			log(null, level, message, t);
 		}
 	}
 }

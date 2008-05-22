@@ -46,7 +46,7 @@ import java.util.StringTokenizer;
 /**
  * SLPConfiguration object holds all configurable properties.
  * 
- * @author Jan S. Rellermeyer, IKS, ETH Zürich
+ * @author Jan S. Rellermeyer, IKS, ETH Zï¿½rich
  * @since 0.1
  */
 class SLPConfiguration {
@@ -131,6 +131,8 @@ class SLPConfiguration {
 	
 	private static final String UA_ONLY_PROP = "net.slp.uaonly";
 	
+	private static final String DEBUG_ENABLED_PROP = "ch.ethz.iks.slp.debug";
+	
 	private static String[] INTERFACES;
 
 	private static int PORT;
@@ -174,6 +176,8 @@ class SLPConfiguration {
 	private static int CONVERGENCE_FAILERCOUNT;
 
 	private static boolean UA_ONLY;
+	
+	private static boolean DEBUG_ENABLED;
 	
 	/**
 	 * create a new SLPConfiguration from properties.
@@ -258,10 +262,11 @@ class SLPConfiguration {
 		
 		CONVERGENCE_FAILERCOUNT = Integer.parseInt(props.getProperty(CONVERGENCE_FAILERCOUNT_PROP, DEFAULT_CONVERGENCE_FAILERCOUNT));
 
-		
-		
 		UA_ONLY = new Boolean(props.getProperty(UA_ONLY_PROP,
 				"false")).booleanValue();
+		
+		DEBUG_ENABLED = new Boolean(props.getProperty(DEBUG_ENABLED_PROP,
+		"false")).booleanValue();
 		
 		if (SECURITY_ENABLED) {
 			PUBLIC_KEY_CACHE = new HashMap(0);
@@ -520,6 +525,10 @@ class SLPConfiguration {
 	 */
 	public boolean isUAOnly() {
 		return UA_ONLY;
+	}
+	
+	public boolean getDebugEnabled() {
+		return DEBUG_ENABLED;
 	}
 
 	public int getTCPTimeout() {

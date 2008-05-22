@@ -33,9 +33,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceFactory;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.log.LogService;
 
 /**
  * Bundle Activator, also serves as a ServiceFactory for Advertiser and Locator
@@ -61,17 +59,9 @@ public class Activator implements BundleActivator, ServiceFactory {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(final BundleContext context) throws Exception {
-		LogService log = null;
-		final ServiceReference sref = context
-				.getServiceReference(LogService.class.getName());
-		if (sref != null) {
-			log = (LogService) context.getService(sref);
-		}
 
 		// initialize the platform abstraction layer
-		SLPCore.platform = new OSGiPlatformAbstraction(context, log, Boolean
-				.valueOf(context.getProperty("ch.ethz.iks.slp.debug"))
-				.booleanValue());
+		SLPCore.platform = new OSGiPlatformAbstraction(context);
 		SLPCore.init();
 
 		// register the service factories
@@ -79,19 +69,6 @@ public class Activator implements BundleActivator, ServiceFactory {
 				this, null);
 		locatorReg = context.registerService("ch.ethz.iks.slp.Locator", this,
 				null);
-
-		if (log != null) {
-			log.log(LogService.LOG_DEBUG, "jSLP OSGi started.");
-		} else {
-			if (context.getProperty("net.slp.traceMsg") != null) {
-				System.err
-						.println("NO LOG SERVICE FOUND, MESSAGE TRACING DISABLED");
-			}
-			if (context.getProperty("ch.ethz.iks.slp.debug") != null) {
-				System.err.println("NO LOG SERVICE FOUND, DEBUG DISABLED");
-			}
-		}
-
 	}
 
 	/**

@@ -44,7 +44,7 @@ import ch.ethz.iks.slp.ServiceLocationException;
 /**
  * base class for all messages that the SLP framework uses.
  * 
- * @author Jan S. Rellermeyer, IKS, ETH Zürich
+ * @author Jan S. Rellermeyer, IKS, ETH Zï¿½rich
  * @since 0.1
  */
 public abstract class SLPMessage {
@@ -244,10 +244,8 @@ public abstract class SLPMessage {
 				final int length = in.readShort();
 				byte[] drop = new byte[length - 4];
 				in.readFully(drop);
-				if (SLPCore.platform.isWarningEnabled()) {
-					SLPCore.platform.logWarning("Dropped SLPv1 message from "
+				SLPCore.platform.logWarning("Dropped SLPv1 message from "
 							+ senderAddr + ":" + senderPort);
-				}
 			}
 			final byte funcID = in.readByte(); // funcID
 			final int length = readInt(in, 3);
@@ -313,10 +311,8 @@ public abstract class SLPMessage {
 			msg.funcID = funcID;
 			msg.locale = locale;
 			if (msg.getSize() != length) {
-				if (SLPCore.platform.isErrorEnabled()) {
-					SLPCore.platform.logError("Length of " + msg + " should be " + length + ", read "
+				SLPCore.platform.logError("Length of " + msg + " should be " + length + ", read "
 								+ msg.getSize());
-				}
 //				throw new ServiceLocationException(
 //						ServiceLocationException.INTERNAL_SYSTEM_ERROR,
 //						"Length of " + msg + " should be " + length + ", read "
@@ -326,9 +322,7 @@ public abstract class SLPMessage {
 		} catch (ProtocolException pe) {
 			throw pe;
 		} catch (IOException ioe) {
-			if (SLPCore.platform.isErrorEnabled()) {
-				SLPCore.platform.logError("Network Error", ioe);
-			}
+			SLPCore.platform.logError("Network Error", ioe);
 			throw new ServiceLocationException(
 					ServiceLocationException.NETWORK_ERROR, ioe.getMessage());
 		}
