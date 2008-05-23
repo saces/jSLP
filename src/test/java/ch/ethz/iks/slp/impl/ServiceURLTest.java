@@ -75,4 +75,40 @@ public class ServiceURLTest extends TestCase {
 		assertEquals(url.getProtocol(), "http");
 		assertEquals(url.toString(), urlString);
 	}
+
+	public void testServiceURLNamingAuthorityCustom() throws Exception {
+		String urlString = "service:test.foo://http://localhost";
+		ServiceURL url = new ServiceURL(urlString, 0);
+		assertEquals(url.getServiceType().toString(), "service:test.foo");
+		assertEquals(url.getHost(), "localhost");
+		assertEquals(url.getPort(), 0);
+		assertEquals(url.getURLPath(), "");
+		assertEquals(url.getProtocol(), "http");
+		assertEquals(url.toString(), urlString);
+		assertTrue("foo".equals(url.getServiceType().getNamingAuthority()));
+	}
+	
+	public void testServiceURLNamingAuthorityDefault() throws Exception {
+		String urlString = "service:test://http://localhost";
+		ServiceURL url = new ServiceURL(urlString, 0);
+		assertEquals(url.getServiceType().toString(), "service:test");
+		assertEquals(url.getHost(), "localhost");
+		assertEquals(url.getPort(), 0);
+		assertEquals(url.getURLPath(), "");
+		assertEquals(url.getProtocol(), "http");
+		assertEquals(url.toString(), urlString);
+		assertTrue("".equals(url.getServiceType().getNamingAuthority()));
+	}
+	
+	public void testServiceURLNamingAuthorityIana() throws Exception {
+		String urlString = "service:test.iana://http://localhost";
+		ServiceURL url = new ServiceURL(urlString, 0);
+		assertEquals(url.getServiceType().toString(), "service:test");
+		assertEquals(url.getHost(), "localhost");
+		assertEquals(url.getPort(), 0);
+		assertEquals(url.getURLPath(), "");
+		assertEquals(url.getProtocol(), "http");
+		assertEquals(url.toString(), "service:test://http://localhost");
+		assertTrue("".equals(url.getServiceType().getNamingAuthority()));
+	}
 }

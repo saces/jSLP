@@ -96,10 +96,19 @@ public final class ServiceType implements Serializable {
 			int namingStart = type.indexOf(".") + 1;
 			if (namingStart != 0) {
 				int namingEnd = type.indexOf(":", namingStart);
+				String na = "";
 				if (namingEnd == -1) {
-					namingAuthority = type.substring(namingStart);
+					na = type.substring(namingStart);
 				} else {
-					namingAuthority = type.substring(namingStart, namingEnd);
+					na = type.substring(namingStart, namingEnd);
+				}
+				// 1954772: isNADefault returns false for "IANA"
+				if("IANA".equalsIgnoreCase(na)) {
+					namingAuthority = "";
+					// remove "iana" from type so toString() is consistent
+					type = type.substring(0, namingStart - 1) + type.substring(namingStart + 4, type.length());
+				} else {
+					namingAuthority = na;
 				}
 			} else {
 				namingAuthority = "";
@@ -131,7 +140,7 @@ public final class ServiceType implements Serializable {
 	 * @return true if this is the case.
 	 */
 	public boolean isNADefault() {
-		return namingAuthority.equals("");
+		return "".equals(namingAuthority);
 	}
 
 	/**
