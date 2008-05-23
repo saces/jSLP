@@ -36,23 +36,11 @@ import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 
 /**
- * Bundle Activator, also serves as a ServiceFactory for Advertiser and Locator
- * services and as listener for appearing log services to allow on-demand
- * logging.
+ * Bundle Activator
  * 
  * @author Jan S. Rellermeyer, ETH Zurich
  */
-public class Activator implements BundleActivator, ServiceFactory {
-
-	/**
-	 * 
-	 */
-	private ServiceRegistration advertiserReg;
-
-	/**
-	 * 
-	 */
-	private ServiceRegistration locatorReg;
+public class Activator implements BundleActivator {
 
 	/**
 	 * 
@@ -64,11 +52,21 @@ public class Activator implements BundleActivator, ServiceFactory {
 		SLPCore.platform = new OSGiPlatformAbstraction(context);
 		SLPCore.init();
 
-		// register the service factories
-		advertiserReg = context.registerService("ch.ethz.iks.slp.Advertiser",
-				this, null);
-		locatorReg = context.registerService("ch.ethz.iks.slp.Locator", this,
-				null);
+		// register the service factories so each consumer gets its own Locator/Activator instance
+		context.registerService("ch.ethz.iks.slp.Advertiser", new ServiceFactory() {
+			public Object getService(Bundle bundle, ServiceRegistration registration) {
+				return new AdvertiserImpl();
+			}
+			public void ungetService(Bundle bundle, ServiceRegistration registration, Object service) {
+			}
+		}, null);
+		context.registerService("ch.ethz.iks.slp.Locator", new ServiceFactory() {
+			public Object getService(Bundle bundle, ServiceRegistration registration) {
+				return new LocatorImpl();
+			}
+			public void ungetService(Bundle bundle,	ServiceRegistration registration, Object service) {
+			}
+		}, null);
 	}
 
 	/**
@@ -78,30 +76,4 @@ public class Activator implements BundleActivator, ServiceFactory {
 	public void stop(final BundleContext context) throws Exception {
 
 	}
-
-	/**
-	 * 
-	 * @see org.osgi.framework.ServiceFactory#getService(org.osgi.framework.Bundle,
-	 *      org.osgi.framework.ServiceRegistration)
-	 */
-	public Object getService(final Bundle bundle,
-			final ServiceRegistration registration) {
-		if (registration == advertiserReg) {
-			return new AdvertiserImpl();
-		} else if (registration == locatorReg) {
-			return new LocatorImpl();
-		}
-		return null;
-	}
-
-	/**
-	 * 
-	 * @see org.osgi.framework.ServiceFactory#ungetService(org.osgi.framework.Bundle,
-	 *      org.osgi.framework.ServiceRegistration, java.lang.Object)
-	 */
-	public void ungetService(final Bundle bundle,
-			final ServiceRegistration registration, Object service) {
-
-	}
-
 }
