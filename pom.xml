@@ -3,7 +3,7 @@
   <name>jSLP-OSGi</name>
   <groupId>ch.ethz.iks.slp</groupId>
   <artifactId>jslp-osgi</artifactId>
-  <version>1.0.0.RC3</version>
+  <version>1.0.0.RC4</version>
   <packaging>bundle</packaging>
 
 	<url>http://jslp.sourceforge.net</url>
@@ -110,6 +110,8 @@
 	      	<instructions>
 				<Include-Resource>{maven-resources}, {maven-dependencies}, target/classes</Include-Resource>
 				<Bundle-Version>${pom.version}</Bundle-Version>
+				<Bundle-Name>jslp-osgi</Bundle-Name>
+				<Bundle-SymbolicName>ch.ethz.iks.slp</Bundle-SymbolicName>
 				<_include>~META-INF/MANIFEST.MF</_include>
 				<!-- BND just produces Bundle-ManifestVersion: 2 headers which we don't want -->
 				<_removeheaders>Bundle-ManifestVersion</_removeheaders> 

@@ -3,7 +3,7 @@
   <name>jSLP-Test</name>
   <groupId>ch.ethz.iks.slp</groupId>
   <artifactId>jslp-test</artifactId>
-  <version>1.0.0.RC3</version>
+  <version>1.0.0.RC4</version>
   <packaging>osgi-bundle</packaging>
     
   <build>
