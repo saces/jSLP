@@ -332,7 +332,7 @@ public abstract class SLPCore {
 			}
 		}
 
-		// a pure UA doesn't need a multicast listener which is only required by an SA and DA
+		// a pure UA doesn't need a multicast listener which is only required by a SA and DA
 		if(!CONFIG.isUAOnly()) {
 			// setup and start the multicast thread
 			multicastThread = new Thread() {
@@ -357,9 +357,6 @@ public abstract class SLPCore {
 								platform.logDebug("SEND (" + reply.address
 											+ ":" + reply.port + ") "
 											+ reply.toString());
-							} else {
-								platform
-									.logDebug("Datagram couldn't be parsed as a SLPMessage");
 							}
 						} catch (Exception e) {
 							platform
@@ -387,7 +384,9 @@ public abstract class SLPCore {
 		if (!noDiscovery) {
 			// perform an initial lookup
 			try {
-				daLookup(null);
+				List scopes = new ArrayList();
+				scopes.add("default");
+				daLookup(scopes);
 			} catch (Exception e) {
 				platform.logError("Exception in initial DA lookup", e);
 			}
@@ -451,6 +450,9 @@ public abstract class SLPCore {
 			DAAdvertisement advert = (DAAdvertisement) message;
 
 			if (advert.errorCode != 0) {
+				platform.logTraceDrop("DROPPED DAADvertisement (" + advert.address + ":"
+						+ advert.port + ") " + advert.toString()
+						+ "(reason: " + advert.errorCode + " != 0");
 				return null;
 			}
 
@@ -546,15 +548,23 @@ public abstract class SLPCore {
 			// message to the daemon.
 			if (daemon != null) {
 				return daemon.handleMessage(message);
+			} else {
+				platform.logDebug("SRVTYPERQST recieved ("
+						+ message.address + ":" + message.port + ") "
+						+ message.toString()
+						+ " but no SLPDaemon to handle the message present");
+				return null;
 			}
-
-			return null;
 		default:
 			// if we have a daemon instance, delegate all other
 			// messages to the daemon.
 			if (daemon != null) {
 				return daemon.handleMessage(message);
 			} else {
+				platform.logDebug("A message recieved ("
+						+ message.address + ":" + message.port + ") "
+						+ message.toString()
+						+ " but no SLPDaemon to handle the message present");
 				return null;
 			}
 		}
