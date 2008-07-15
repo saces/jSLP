@@ -80,9 +80,6 @@ public class OSGiPlatformAbstraction implements PlatformAbstraction,
 			this.log = (LogService) context.getService(sref);
 		}
 
-		// debug?
-		logWarning("DEBUG OUTPUT: " + Boolean.toString(SLPCore.CONFIG.getDebugEnabled()));
-		
 		// track the LogService for life cycle events
 		context.addServiceListener(this, "(" + Constants.OBJECTCLASS + "=" + LogService.class.getName() + ")");
 
