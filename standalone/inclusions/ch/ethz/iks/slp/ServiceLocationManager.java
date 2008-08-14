@@ -105,6 +105,7 @@ public final class ServiceLocationManager extends SLPCore {
 	public static Advertiser getAdvertiser(final Locale locale)
 			throws ServiceLocationException {
 		init();
+		SLPCore.initMulticastSocket();
 		if (advertiser != null) {
 			try {
 				return (Advertiser) advertiser

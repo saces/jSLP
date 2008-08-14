@@ -129,8 +129,6 @@ class SLPConfiguration {
 
 	private static final String CONVERGENCE_FAILERCOUNT_PROP = "net.slp.failercount";
 	
-	private static final String UA_ONLY_PROP = "net.slp.uaonly";
-	
 	private static final String DEBUG_ENABLED_PROP = "ch.ethz.iks.slp.debug";
 	
 	private static String[] INTERFACES;
@@ -175,8 +173,6 @@ class SLPConfiguration {
 	
 	private static int CONVERGENCE_FAILERCOUNT;
 
-	private static boolean UA_ONLY;
-	
 	private static boolean DEBUG_ENABLED;
 	
 	/**
@@ -262,9 +258,6 @@ class SLPConfiguration {
 		
 		CONVERGENCE_FAILERCOUNT = Integer.parseInt(props.getProperty(CONVERGENCE_FAILERCOUNT_PROP, DEFAULT_CONVERGENCE_FAILERCOUNT));
 
-		UA_ONLY = new Boolean(props.getProperty(UA_ONLY_PROP,
-				"false")).booleanValue();
-		
 		DEBUG_ENABLED = new Boolean(props.getProperty(DEBUG_ENABLED_PROP,
 		"false")).booleanValue();
 		
@@ -518,13 +511,6 @@ class SLPConfiguration {
 	 */
 	int getConvergenceFailerCount() {
 		return CONVERGENCE_FAILERCOUNT;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isUAOnly() {
-		return UA_ONLY;
 	}
 	
 	public boolean getDebugEnabled() {

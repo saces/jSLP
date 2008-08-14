@@ -65,6 +65,8 @@ import ch.ethz.iks.slp.ServiceType;
  * @since 0.6
  */
 public abstract class SLPCore {
+	private static volatile boolean isMulticastSocketInitialized = false;
+	private static volatile boolean isInitialized = false;
 
 	protected static PlatformAbstraction platform;
 
@@ -270,31 +272,14 @@ public abstract class SLPCore {
 	}
 
 	protected static void init() {
+		if(isInitialized) {
+			return;
+		}
+		isInitialized = true;
+		
 		platform.logDebug("jSLP is running on the following interfaces: "
 					+ java.util.Arrays.asList(myIPs));
 		platform.logDebug("jSLP is using port: " + SLP_PORT);
-
-		// a pure UA doesn't need a multicast listener which is only required by an SA and DA
-		if(!CONFIG.isUAOnly()) {
-			try {
-				mtcSocket = new MulticastSocket(SLP_PORT);
-				mtcSocket.setTimeToLive(CONFIG.getMcastTTL());
-				if (CONFIG.getInterfaces() != null) {
-					try {
-						mtcSocket.setInterface(InetAddress.getByName(myIPs[0]));
-					} catch (Throwable t) {
-
-					}
-				}
-				mtcSocket.joinGroup(MCAST_ADDRESS);
-			} catch (BindException be) {
-				platform.logError(be.getMessage(), be);
-				throw new RuntimeException("You have to be root to open port "
-						+ SLP_PORT);
-			} catch (Exception e) {
-				platform.logError(e.getMessage(), e);
-			}
-		}
 
 		String[] daAddresses = CONFIG.getDaAddresses();
 		if (daAddresses == null) {
@@ -332,55 +317,6 @@ public abstract class SLPCore {
 			}
 		}
 
-		// a pure UA doesn't need a multicast listener which is only required by a SA and DA
-		if(!CONFIG.isUAOnly()) {
-			// setup and start the multicast thread
-			multicastThread = new Thread() {
-				public void run() {
-					DatagramPacket packet;
-					byte[] bytes = new byte[SLPCore.CONFIG.getMTU()];
-					while (true) {
-						try {
-							packet = new DatagramPacket(bytes, bytes.length);
-							mtcSocket.receive(packet);
-							final SLPMessage reply = handleMessage(SLPMessage
-									.parse(packet.getAddress(), packet.getPort(),
-											new DataInputStream(
-													new ByteArrayInputStream(packet
-															.getData())), false));
-							if (reply != null) {
-								final byte[] repbytes = reply.getBytes();
-								DatagramPacket datagramPacket = new DatagramPacket(
-										repbytes, repbytes.length, reply.address,
-										reply.port);
-								mtcSocket.send(datagramPacket);
-								platform.logDebug("SEND (" + reply.address
-											+ ":" + reply.port + ") "
-											+ reply.toString());
-							}
-						} catch (Exception e) {
-							platform
-								.logError(
-										"Exception in Multicast Receiver Thread",
-										e);
-						}
-					}
-				}
-			};
-			multicastThread.start();
-			
-			// check, if there is already a SLP daemon runnung on port 427
-			// that can be either a jSLP daemon, or an OpenSLP daemon or something
-			// else. If not, try to start a new daemon instance.
-			if (daemonConstr != null) {
-				try {
-					daemon = (SLPDaemon) daemonConstr.newInstance(null);
-				} catch (Exception e) {
-					daemon = null;
-				}
-			}
-		}
-
 		if (!noDiscovery) {
 			// perform an initial lookup
 			try {
@@ -392,6 +328,79 @@ public abstract class SLPCore {
 			}
 		}
 
+	}
+
+	// a pure UA doesn't need a multicast listener which is only required by a SA or DA
+	protected static void initMulticastSocket() {
+		if(isMulticastSocketInitialized) {
+			return;
+		}
+		isMulticastSocketInitialized = true;
+		
+		try {
+			mtcSocket = new MulticastSocket(SLP_PORT);
+			mtcSocket.setTimeToLive(CONFIG.getMcastTTL());
+			if (CONFIG.getInterfaces() != null) {
+				try {
+					mtcSocket.setInterface(InetAddress.getByName(myIPs[0]));
+				} catch (Throwable t) {
+					platform.logDebug("Setting multicast socket interface to " + myIPs[0] + " failed.",t);
+				}
+			}
+			mtcSocket.joinGroup(MCAST_ADDRESS);
+		} catch (BindException be) {
+			platform.logError(be.getMessage(), be);
+			throw new RuntimeException("You have to be root to open port "
+					+ SLP_PORT);
+		} catch (Exception e) {
+			platform.logError(e.getMessage(), e);
+		}
+		
+		// setup and start the multicast thread
+		multicastThread = new Thread() {
+			public void run() {
+				DatagramPacket packet;
+				byte[] bytes = new byte[SLPCore.CONFIG.getMTU()];
+				while (true) {
+					try {
+						packet = new DatagramPacket(bytes, bytes.length);
+						mtcSocket.receive(packet);
+						final SLPMessage reply = handleMessage(SLPMessage
+								.parse(packet.getAddress(), packet.getPort(),
+										new DataInputStream(
+												new ByteArrayInputStream(packet
+														.getData())), false));
+						if (reply != null) {
+							final byte[] repbytes = reply.getBytes();
+							DatagramPacket datagramPacket = new DatagramPacket(
+									repbytes, repbytes.length, reply.address,
+									reply.port);
+							mtcSocket.send(datagramPacket);
+							platform.logDebug("SEND (" + reply.address
+										+ ":" + reply.port + ") "
+										+ reply.toString());
+						}
+					} catch (Exception e) {
+						platform
+							.logError(
+									"Exception in Multicast Receiver Thread",
+									e);
+					}
+				}
+			}
+		};
+		multicastThread.start();
+		
+		// check, if there is already a SLP daemon runnung on port 427
+		// that can be either a jSLP daemon, or an OpenSLP daemon or something
+		// else. If not, try to start a new daemon instance.
+		if (daemonConstr != null) {
+			try {
+				daemon = (SLPDaemon) daemonConstr.newInstance(null);
+			} catch (Exception e) {
+				daemon = null;
+			}
+		}
 	}
 
 	/**

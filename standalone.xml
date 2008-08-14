@@ -3,7 +3,7 @@
 	<name>jSLP</name>
 	<groupId>ch.ethz.iks.slp</groupId>
 	<artifactId>jslp</artifactId>
-	<version>1.0.0.RC4</version>
+	<version>1.0.0.RC5</version>
 	<packaging>jar</packaging>
 	<description>jSLP is a pure Java implementation of RFC 2608, Service Location Protocol</description>
 	<url>http://jslp.sourceforge.net</url>
