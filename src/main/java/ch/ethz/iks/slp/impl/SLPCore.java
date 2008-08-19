@@ -227,7 +227,8 @@ public abstract class SLPCore {
 			config = propFile.exists() ? new SLPConfiguration(propFile)
 					: new SLPConfiguration();
 		} catch (IOException e1) {
-			platform.logWarning("Could not parse the property file", e1);
+			System.out.println("Could not parse the property file" + propFile.toString());
+			e1.printStackTrace();
 			config = new SLPConfiguration();
 		}
 		CONFIG = config;

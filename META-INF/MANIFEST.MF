@@ -7,3 +7,6 @@ Bundle-Activator: ch.ethz.iks.slp.impl.Activator
 Bundle-Vendor: Jan S. Rellermeyer, IKS, ETH Zurich
 Import-Package: org.osgi.framework, org.osgi.service.log
 Bundle-Description: jSLP, the pure Java Service Location Protocol implementation
+Eclipse-AutoStart: true
+Bundle-RequiredExecutionEnvironment: CDC-1.0/Foundation-1.0,
+ OSGi/Minimum-1.0
