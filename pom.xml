@@ -9,8 +9,8 @@
 	<url>http://jslp.sourceforge.net</url>
 
 	<organization>
-		<name>IKS, ETH Zurich</name>
-		<url>http://www.iks.inf.ethz.ch</url>
+		<name>Systems Group, ETH Zurich</name>
+		<url>http://www.systems.ethz.ch</url>
 	</organization>
 
 	<developers>
@@ -19,7 +19,7 @@
 			<name>Jan S. Rellermeyer</name>
 			<email>rellermeyer_at_inf.ethz.ch</email>
 			<url>http://people.inf.ethz.ch/rjan</url>
-			<organization>IKS, ETH Zurich</organization>
+			<organization>Systems Group, ETH Zurich</organization>
 			<organizationUrl>http://www.iks.inf.ethz.ch</organizationUrl>
 			<roles>
 				<role>Project creator</role>
@@ -56,7 +56,7 @@
 	
 	<scm>
 		<connection>scm:svn:https://jslp.svn.sourceforge.net/svnroot/jslp</connection>
-		<developerConnection>scm:svn:rjan@https://jslp.svn.sourceforge.net/svnroot/jslp</developerConnection>
+		<developerConnection>scm:svn:https://rjan@jslp.svn.sourceforge.net/svnroot/jslp</developerConnection>
 		<url>http://jslp.svn.sourceforge.net/jslp</url>
 	</scm>
     

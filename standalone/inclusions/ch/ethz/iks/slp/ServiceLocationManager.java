@@ -1,5 +1,5 @@
-/* Copyright (c) 2005-2007 Jan S. Rellermeyer
- * Information and Communication Systems Research Group (IKS),
+/* Copyright (c) 2005-2008 Jan S. Rellermeyer
+ * Systems Group,
  * Department of Computer Science, ETH Zurich.
  * All rights reserved.
  *
@@ -36,7 +36,7 @@ import ch.ethz.iks.slp.impl.StandalonePlatformAbstraction;
  * The central manager for SLP interaction. Application can get a Locator for UA
  * functionality and a Advertiser for SA functionality.
  * 
- * @author Jan S. Rellermeyer, IKS, ETH Zurich
+ * @author Jan S. Rellermeyer, ETH Zurich
  * @since 0.1
  */
 public final class ServiceLocationManager extends SLPCore {

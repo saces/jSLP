@@ -1,5 +1,5 @@
-/* Copyright (c) 2006-2007 Jan S. Rellermeyer
- * Information and Communication Systems Research Group (IKS),
+/* Copyright (c) 2006-2008 Jan S. Rellermeyer
+ * Systems Group,
  * Institute for Pervasive Computing, ETH Zurich.
  * All rights reserved.
  *
@@ -42,7 +42,7 @@ import java.util.Vector;
 /**
  * The RFC1960 LDAP Filter implementation class.
  * 
- * @author Jan S. Rellermeyer, IKS, ETH Zurich
+ * @author Jan S. Rellermeyer, ETH Zurich
  */
 public final class RFC1960Filter implements Filter {
 	/**

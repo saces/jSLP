@@ -1,12 +1,5 @@
-package ch.ethz.iks.slp.impl;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import ch.ethz.iks.slp.impl.filter.Filter;
-import ch.ethz.iks.slp.impl.filter.RFC1960Filter;
-
-/* Copyright (c) 2005-2007 Jan S. Rellermeyer
- * Information and Communication Systems Research Group (IKS),
+/* Copyright (c) 2005-2008 Jan S. Rellermeyer
+ * Systems Group,
  * Department of Computer Science, ETH Zurich.
  * All rights reserved.
  *
@@ -33,6 +26,12 @@ import ch.ethz.iks.slp.impl.filter.RFC1960Filter;
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+package ch.ethz.iks.slp.impl;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import ch.ethz.iks.slp.impl.filter.Filter;
+import ch.ethz.iks.slp.impl.filter.RFC1960Filter;
 
 /**
  * Platform abstraction for the standalone implementation.
