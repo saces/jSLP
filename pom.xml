@@ -20,7 +20,7 @@
 			<email>rellermeyer_at_inf.ethz.ch</email>
 			<url>http://people.inf.ethz.ch/rjan</url>
 			<organization>Systems Group, ETH Zurich</organization>
-			<organizationUrl>http://www.iks.inf.ethz.ch</organizationUrl>
+			<organizationUrl>http://www.systems.ethz.ch</organizationUrl>
 			<roles>
 				<role>Project creator</role>
 				<role>Researcher</role>
@@ -62,7 +62,6 @@
     
   <build>
     <plugins>
-	<!--
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
@@ -97,7 +96,6 @@
           </execution>
         </executions>
       </plugin>
-    -->
       <plugin>
 		    <groupId>org.apache.maven.plugins</groupId>
         	<artifactId>maven-compiler-plugin</artifactId>
